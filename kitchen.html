@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kitchen Orders Dashboard</title>
+  <style>
+  body {
+    font-family: "Inter", sans-serif;
+    background: #f9fafb;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+  }
+
+  .container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .section {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* ensures sticky header corners follow rounding */
+  }
+
+  /* Sticky section headers with rounded corners */
+  .section h2 {
+    text-align: center;
+    color: #555;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding: 16px 0;
+    margin: 0;
+    z-index: 5;
+    border-bottom: 1px solid #eee;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+
+  /* Scrollable content area */
+  #active-orders,
+  #done-orders {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 20px;
+    scroll-behavior: smooth;
+  }
+
+  /* Optional scrollbar styling */
+  #active-orders::-webkit-scrollbar,
+  #done-orders::-webkit-scrollbar {
+    width: 6px;
+  }
+  #active-orders::-webkit-scrollbar-thumb,
+  #done-orders::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+
+  /* Order card styling */
+  .order {
+    background: #fdfdfd;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .order:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .order[style*="#d1fae5"] {
+    border: 2px solid #16a34a;
+  }
+
+  .order[style*="#f0f0f0"] {
+    border: 1px solid #ccc;
+  }
+
+  .order h3 {
+    margin-top: 0;
+  }
+
+  .items {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  .total {
+    font-weight: 600;
+    margin-top: 10px;
+  }
+
+  .order small {
+    display: block;
+    color: #888;
+    margin-top: 8px;
+  }
+
+  button.done-btn {
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    transition: background 0.2s ease;
+  }
+
+  button.done-btn:hover {
+    background: #15803d;
+  }
+
+  .empty {
+    text-align: center;
+    color: #aaa;
+    margin-top: 20px;
+    font-style: italic;
+  }
+</style>
+
+
+</head>
+<body>
+  <h1>📋 Kitchen Dashboard</h1>
+
+  <div class="container">
+    <div class="section">
+      <h2>🧾 Active Orders</h2>
+      <div id="active-orders"></div>
+    </div>
+
+    <div class="section">
+      <h2>✅ Finished Orders</h2>
+      <div id="done-orders"></div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-bottom: 20px;padding-top: 20px;">
+  <button onclick="archiveAllOrders()" style="
+    background:#e11d48;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:0.95rem;
+  ">🧹 Start New Day</button>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseClient = supabase.createClient(
+    "https://sdzwrpqyhxsljtnndwwz.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkendycHF5aHhzbGp0bm5kd3d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1NzUzNDksImV4cCI6MjA3NTE1MTM0OX0.KwW62zUh_bfaBGO0q5-usyMtYsBrfDUbdj30zxx4Dfk"
+  );
+
+  const activeOrdersDiv = document.getElementById("active-orders");
+  const doneOrdersDiv = document.getElementById("done-orders");
+
+  // Render each order
+  function renderOrder(order) {
+    const div = document.createElement("div");
+    div.className = "order";
+    div.style.background = order.status === "done" ? "#d1fae5" : "#f0f0f0";
+
+    const itemsList = (order.items || [])
+      .map(i => `<li>${i.qty} × ${i.name}</li>`)
+      .join("");
+
+    div.innerHTML = `
+      <h3>Order #${order.daily_number || order.id}</h3>
+      <p><strong>Choice:</strong> ${order.choice ?? "-"}</p>
+      <ul class="items">${itemsList}</ul>
+      <div class="total">Total: RM${Number(order.total || 0).toFixed(2)}</div>
+      <small>${new Date(order.created_at).toLocaleString()}</small>
+    `;
+
+    if (order.status !== "done") {
+      const doneBtn = document.createElement("button");
+      doneBtn.textContent = "Mark as Done ✅";
+      doneBtn.className = "done-btn";
+      doneBtn.onclick = () => markAsDone(order.id, div);
+      div.appendChild(doneBtn);
+    }
+
+    return div;
+  }
+
+  // Update order status
+  async function markAsDone(orderId, cardElement) {
+  console.log("Marking order as done:", orderId);
+
+  // disable button immediately to prevent double-click
+  const btn = cardElement.querySelector(".done-btn");
+  if (btn) btn.disabled = true;
+
+  const { error } = await supabaseClient
+    .from("orders")
+    .update({ status: "done" })
+    .eq("id", orderId);
+
+  if (error) {
+    console.error("Supabase update error:", error);
+    alert("Could not mark order as done: " + error.message);
+    if (btn) btn.disabled = false;
+    return;
+  }
+
+  // ⚡️ Let realtime handle the re-render — don't manually move the card
+  // Just give instant visual feedback locally
+  cardElement.style.transition = "background 0.3s ease";
+  cardElement.style.background = "#d1fae5";
+  if (btn) btn.remove();
+}
+
+  // ✅ Archive all current orders (for new day)
+async function archiveAllOrders() {
+  if (!confirm("Are you sure you want to start a new day? This will hide all current orders.")) return;
+
+  const { error } = await supabaseClient
+    .from("orders")
+    .update({ archived: true })
+    .eq("archived", false); // mark only unarchived (active) orders
+
+  if (error) {
+    console.error("Error archiving orders:", error);
+    alert("Failed to archive orders. Check console for details.");
+    return;
+  }
+
+  alert("All current orders archived. Starting fresh!");
+  loadOrders(); // refresh UI instantly
+}
+
+// ✅ Load all active (non-archived) orders
+async function loadOrders() {
+  const { data, error } = await supabaseClient
+    .from("orders")
+    .select("*")
+    .eq("archived", false) // ✅ Only show unarchived (today’s) orders
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Load orders error:", error);
+    return;
+  }
+
+  activeOrdersDiv.innerHTML = "";
+  doneOrdersDiv.innerHTML = "";
+
+  data.forEach(order => {
+    const el = renderOrder(order);
+    if (order.status === "done") {
+      doneOrdersDiv.appendChild(el);
+    } else {
+      activeOrdersDiv.appendChild(el);
+    }
+  });
+
+  // ✅ Show placeholder if no orders
+  if (!activeOrdersDiv.children.length) {
+    activeOrdersDiv.innerHTML = '<p class="empty">No active orders</p>';
+  }
+
+  if (!doneOrdersDiv.children.length) {
+    doneOrdersDiv.innerHTML = '<p class="empty">No completed orders</p>';
+  }
+}
+
+// ✅ Initial load
+loadOrders();
+
+// ✅ Realtime updates (unchanged)
+supabaseClient
+  .channel("orders-channel")
+  .on("postgres_changes", { event: "INSERT", schema: "public", table: "orders" }, () => loadOrders())
+  .on("postgres_changes", { event: "UPDATE", schema: "public", table: "orders" }, () => loadOrders())
+  .subscribe();
+
+</script>
+
+</body>
+</html>
