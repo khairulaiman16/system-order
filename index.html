@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Food System</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+
   <style>
     body {
       margin: 0;
@@ -337,6 +340,7 @@
   const choiceModal = document.getElementById('choiceModal');
   const customerChoiceDisplay = document.getElementById('customerChoice');
 
+
   let currentFood = null;
   let orders = [];
   let customerChoice = null;
@@ -451,6 +455,40 @@
     customerChoiceDisplay.textContent = '';
     renderOrders();
   });
+
+
+  //Supabase integration
+  // Initialize Supabase client 
+  const supabaseClient = supabase.createClient(
+    'https://sdzwrpqyhxsljtnndwwz.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkendycHF5aHhzbGp0bm5kd3d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1NzUzNDksImV4cCI6MjA3NTE1MTM0OX0.KwW62zUh_bfaBGO0q5-usyMtYsBrfDUbdj30zxx4Dfk'
+  );
+
+  checkoutBtn.addEventListener('click', async () => {
+    let total = orders.reduce((sum, order) => sum + order.price * order.qty, 0);
+    finalTotal.textContent = `Jumlah Akhir: RM${total.toFixed(2)}`;
+    thankyouModal.style.display = 'flex';
+
+    // send order to supabase
+    const { data, error } = await supabaseClient
+      .from('orders')
+      .insert([
+        {
+          choice: customerChoice,
+          items: orders, // stored as JSON
+          total: total,
+          created_at: new Date().toISOString()
+        }
+      ]);
+
+    if (error) {
+      console.error("Failed to save order:", error);
+    } else {
+      console.log("Order saved:", data);
+    }
+  });
+  
+  
 </script>
 
 </body>
