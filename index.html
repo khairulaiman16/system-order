@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Food System</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #f4f4f4;
+    }
+
+    /* Layout */
+    .menu {
+      width: 70%;
+      background: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      overflow-x: auto;
+    }
+    .menu::-webkit-scrollbar {
+      display: none;
+    }
+
+    .order {
+      width: 30%;
+      background: #fafafa;
+      border-left: 2px solid #eee;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Food Cards */
+    .food {
+      flex: 0 0 220px;
+      height: 280px;
+      background: white;
+      border-radius: 15px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .food:hover {
+      transform: scale(1.05);
+    }
+    .food img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .food h3 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+    }
+    .food p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    /* Orders */
+    .order h2 {
+      margin-top: 0;
+      font-size: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+    .order-list {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .total {
+      font-weight: bold;
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .checkout-btn {
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      width: 320px;
+      text-align: center;
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .qty-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 15px 0;
+      gap: 10px;
+    }
+    .qty-control button {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .qty-control input {
+      width: 60px;
+      text-align: center;
+      font-size: 18px;
+      padding: 5px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+    }
+    .add-btn {
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .close-btn {
+      margin-top: 10px;
+      background: #dc3545;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* Checkout Thank You */
+    .thankyou {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .thankyou-content {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      width: 300px;
+      animation: popIn 0.3s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+      }
+      .menu, .order {
+        width: 100%;
+        height: 50%;
+      }
+      .menu {
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menu (Left Panel) -->
+  <div class="menu">
+    <div class="food" data-name="Roti Canai" data-price="1.50">
+      <img src="Assets/roti-canai.jpg" alt="Roti Canai">
+      <h3>Roti Canai</h3>
+      <p>RM1.50 / pc</p>
+    </div>
+    <div class="food" data-name="Satay Ayam" data-price="1.40">
+      <img src="Assets/satay-ayam.png" alt="Satay Ayam">
+      <h3>Satay Ayam</h3>
+      <p>RM1.40 / pc</p>
+    </div>
+    <div class="food" data-name="Satay Daging" data-price="1.40">
+      <img src="Assets/satay-daging.png" alt="Satay Daging">
+      <h3>Satay Daging</h3>
+      <p>RM1.40 / pc</p>
+    </div>
+  </div>
+
+  <!-- Order (Right Panel) -->
+  <div class="order">
+    <h2>Pesanan Anda</h2>
+    <div class="order-list" id="orderList"></div>
+    <div class="total" id="totalAmount">Jumlah: RM0.00</div>
+    <button class="checkout-btn" id="checkoutBtn">Selesai</button>
+  </div>
+
+  <!-- Modal for Quantity -->
+  <div id="foodModal" class="modal">
+    <div class="modal-content">
+      <h3 id="modalFoodName"></h3>
+      <p id="modalFoodPrice"></p>
+      <div class="qty-control">
+        <button id="decreaseQty">-</button>
+        <input type="number" id="qtyInput" value="1" min="1">
+        <button id="increaseQty">+</button>
+      </div>
+      <button class="add-btn" id="addToOrder">Tambah ke Pesanan</button><br>
+      <button class="close-btn" id="closeModal">Batal</button>
+    </div>
+  </div>
+
+  <!-- Thank You Modal -->
+  <div id="thankyouModal" class="thankyou">
+    <div class="thankyou-content">
+      <h3>Terima Kasih!</h3>
+      <p id="finalTotal"></p>
+      <button class="close-btn" id="closeThankyou">Tutup</button>
+    </div>
+  </div>
+
+<script>
+  const foods = document.querySelectorAll('.food');
+  const modal = document.getElementById('foodModal');
+  const modalFoodName = document.getElementById('modalFoodName');
+  const modalFoodPrice = document.getElementById('modalFoodPrice');
+  const qtyInput = document.getElementById('qtyInput');
+  const increaseQtyBtn = document.getElementById('increaseQty');
+  const decreaseQtyBtn = document.getElementById('decreaseQty');
+  const addToOrderBtn = document.getElementById('addToOrder');
+  const closeModalBtn = document.getElementById('closeModal');
+  const orderList = document.getElementById('orderList');
+  const totalAmount = document.getElementById('totalAmount');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const thankyouModal = document.getElementById('thankyouModal');
+  const finalTotal = document.getElementById('finalTotal');
+  const closeThankyouBtn = document.getElementById('closeThankyou');
+
+  let currentFood = null;
+  let orders = [];
+
+  foods.forEach(food => {
+    food.addEventListener('click', () => {
+      currentFood = {
+        name: food.dataset.name,
+        price: parseFloat(food.dataset.price)
+      };
+      qtyInput.value = 1; 
+      modalFoodName.textContent = currentFood.name;
+      modalFoodPrice.textContent = `Harga: RM${currentFood.price.toFixed(2)} / pc`;
+      modal.style.display = 'flex';
+    });
+  });
+
+  increaseQtyBtn.addEventListener('click', () => {
+    qtyInput.value = parseInt(qtyInput.value) + 1;
+  });
+
+  decreaseQtyBtn.addEventListener('click', () => {
+    if (parseInt(qtyInput.value) > 1) {
+      qtyInput.value = parseInt(qtyInput.value) - 1;
+    }
+  });
+
+  addToOrderBtn.addEventListener('click', () => {
+    const qty = parseInt(qtyInput.value);
+    if (qty > 0) {
+      orders.push({ name: currentFood.name, price: currentFood.price, qty });
+      renderOrders();
+      modal.style.display = 'none';
+    }
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  function renderOrders() {
+    orderList.innerHTML = '';
+    let total = 0;
+    orders.forEach(order => {
+      const item = document.createElement('div');
+      item.className = 'order-item';
+      item.innerHTML = `<span>${order.qty} x ${order.name}</span><span>RM${(order.price * order.qty).toFixed(2)}</span>`;
+      orderList.appendChild(item);
+      total += order.price * order.qty;
+    });
+    totalAmount.textContent = `Jumlah: RM${total.toFixed(2)}`;
+  }
+
+  checkoutBtn.addEventListener('click', () => {
+    let total = orders.reduce((sum, order) => sum + order.price * order.qty, 0);
+    finalTotal.textContent = `Jumlah Akhir: RM${total.toFixed(2)}`;
+    thankyouModal.style.display = 'flex';
+  });
+
+  closeThankyouBtn.addEventListener('click', () => {
+    thankyouModal.style.display = 'none';
+    orders = [];
+    renderOrders();
+  });
+</script>
+
+</body>
+</html>
