@@ -12,7 +12,8 @@
       margin: 0;
       font-family: Arial, sans-serif;
       display: flex;
-      /* Removed height: 100vh to allow the body to manage scrolling */
+      /* Remove min-height: 100vh; to allow the body to manage scrolling */
+      /* Keep standard flow */
       background: #f4f4f4;
     }
 
@@ -21,6 +22,7 @@
         width: 70%;
         padding: 0 20px 20px 20px;
         box-sizing: border-box;
+        /* Crucially, remove overflow-y: auto here. Let the body scroll. */
     }
     
     .menu-header {
@@ -29,7 +31,7 @@
         align-items: center;
         margin-bottom: 20px;
         
-        /* STICKY HEADER for MENU */
+        /* CORRECTED STICKY HEADER for MENU */
         position: sticky; 
         top: 0; 
         background: #f4f4f4; 
@@ -63,14 +65,14 @@
       
       /* Make order panel FIXED and full height to stick to the right side */
       height: 100vh; 
-      position: fixed; 
+      position: fixed; /* Changed from sticky to fixed for consistent right-side stick */
       top: 0;
-      right: 0;
+      right: 0; /* Pin it to the right edge */
     }
 
-    /* Food Cards */
+    /* Food Cards - (Retained styles) */
     .food {
-      height: 280px; /* Adjusted height for basic layout */
+      height: 320px;
       background: white;
       border-radius: 15px;
       padding: 10px;
@@ -105,6 +107,30 @@
       color: #555;
     }
     
+    /* Admin Controls - (Retained styles) */
+    .admin-controls {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        padding-top: 5px;
+        border-top: 1px solid #eee;
+        margin-top: 5px;
+    }
+    .admin-controls button {
+        padding: 6px 10px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .edit-btn { background: #ffc107; color: #333; }
+    .edit-btn:hover { background: #e0a800; }
+    .remove-btn-menu { background: #dc3545; color: white; }
+    .remove-btn-menu:hover { background: #c82333; }
+
+
     /* Orders */
     .order h2 {
       /* STICKY HEADER INSIDE the FIXED ORDER panel */
@@ -166,7 +192,7 @@
       border-radius: 8px;
     }
 
-    /* Modal */
+    /* Modal - (Retained styles) */
     .modal {
       display: none;
       position: fixed;
@@ -190,16 +216,27 @@
       to { transform: scale(1); opacity: 1; }
     }
     
-    /* Style for Customer Details Inputs (Name and Phone) */
-    #nameInput,
-    #phoneInput {
-        padding: 10px; 
-        margin: 8px 0; 
-        width: 80%; 
-        border: 2px solid #ddd;
-        border-radius: 8px; 
-        font-size: 16px;
-        text-align: center;
+    #addItemBtn {
+        background: #28a745;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: background 0.2s;
+    }
+    #addItemBtn:hover { background: #1e7e34; }
+
+    #addMenuModal input {
+        width: 90%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 6px;
         box-sizing: border-box;
     }
 
@@ -227,7 +264,12 @@
       border: none; border-radius: 8px; cursor: pointer;
     }
 
-    /* Thank You Popup */
+    #nameInput {
+        padding: 10px; margin: 15px 0; width: 80%; border: 2px solid #ddd;
+        border-radius: 8px; font-size: 16px; text-align: center;
+    }
+
+    /* Thank You Popup - (Retained styles) */
     .thankyou {
       display: none; position: fixed; z-index: 2000; top: 0; left: 0;
       width: 100%; height: 100%; background: rgba(0,0,0,0.6);
@@ -239,7 +281,7 @@
     }
     .thankyou-content img { max-width: 200px; margin: 15px auto; display: block; }
 
-    /* Choice Modal Buttons */
+    /* Choice Modal Buttons - (Retained styles) */
     .choice-btn {
       padding: 10px 20px; margin: 10px; border: none; border-radius: 8px;
       cursor: pointer; font-size: 16px; color: white;
@@ -256,9 +298,9 @@
       }
       .order {
         width: 100%;
-        height: auto; 
-        position: static; 
-        margin-top: 20px; 
+        height: auto; /* Remove fixed height on mobile */
+        position: static; /* Remove fixed position on mobile */
+        margin-top: 20px; /* Add space between menu and order */
         border-left: none;
         padding: 20px;
       }
@@ -267,6 +309,7 @@
         top: 0;
         z-index: 10;
         padding: 20px;
+        /* Negate margin/padding added by parent containers */
         margin: -20px -20px 20px -20px; 
         width: auto;
       }
@@ -277,38 +320,16 @@
         background: #fafafa;
       }
     }
-  </style>
+</style>
 </head>
 <body>
 
   <div class="menu-wrapper">
     <div class="menu-header">
         <h2>Menu</h2>
-        </div>
+        <button id="addItemBtn">+</button> </div>
     <div class="menu" id="menuContainer">
-      
-      <div class="food" data-name="Roti Canai" data-price="1.50">
-        <img src="Assets/roti-canai.jpg" alt="Roti Canai">
-        <h3>Roti Canai</h3>
-        <p>RM1.50 / pc</p>
-      </div>
-      <div class="food" data-name="Satay Ayam" data-price="1.40">
-        <img src="Assets/satay-ayam.png" alt="Satay Ayam">
-        <h3>Satay Ayam</h3>
-        <p>RM1.40 / pc</p>
-      </div>
-      <div class="food" data-name="Satay Daging" data-price="1.40">
-        <img src="Assets/satay-daging.png" alt="Satay Daging">
-        <h3>Satay Daging</h3>
-        <p>RM1.40 / pc</p>
-      </div>
-      <div class="food" data-name="Nasi Impit" data-price="1.00">
-        <img src="Assets/nasi-impit.png" alt="Nasi Impit">
-        <h3>Nasi Impit</h3>
-        <p>RM1.00 / pc</p>
-      </div>
-
-    </div>
+        </div>
   </div>
 
   <div class="order">
@@ -343,14 +364,24 @@
 
   <div id="nameModal" class="modal">
     <div class="modal-content">
-      <h3>Sila masukkan butiran anda</h3>
-      <input type="text" id="nameInput" placeholder="Nama Anda (e.g., Meor Azlan)">
-      <input type="tel" id="phoneInput" placeholder="No. Telefon (e.g., 0123456789)">
+      <h3>Sila masukkan nama anda</h3>
+      <input type="text" id="nameInput" placeholder="Contoh: Meor Azlan">
       <button class="add-btn" id="confirmNameBtn">Sahkan Pesanan</button>
       <button class="close-btn" id="closeNameModal">Batal</button>
     </div>
   </div>
   
+  <div id="addMenuModal" class="modal">
+    <div class="modal-content">
+        <h3>Tambah Menu Baru</h3> 
+        <input type="text" id="menuNameInput" placeholder="Nama Makanan" required><br>
+        <input type="number" id="menuPriceInput" placeholder="Harga (e.g., 1.50)" step="0.01" required><br>
+        <input type="text" id="menuImageInput" placeholder="URL Imej (Optional)" value="https://via.placeholder.com/160" required><br>
+        <button class="add-btn" id="saveMenuBtn">Simpan Menu</button><br>
+        <button class="close-btn" id="closeMenuModal">Batal</button>
+    </div>
+  </div>
+
   <div id="thankyouModal" class="thankyou">
     <div class="thankyou-content">
       <h3>Terima Kasih!</h3>
@@ -361,7 +392,14 @@
   </div>
 
 <script>
-  const foods = document.querySelectorAll('.food');
+  // Supabase initialization (unchanged)
+  const supabaseClient = supabase.createClient(
+    'https://sdzwrpqyhxsljtnndwwz.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkendycHF5aHhzbGp0bm5kd3d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1NzUzNDksImV4cCI6MjA3NTE1MTM0OX0.KwW62zUh_bfaBGO0q5-usyMtYsBrfDUbdj30zxx4Dfk'
+  );
+
+  // --- EXISTING ELEMENTS ---
+  const menuContainer = document.getElementById('menuContainer');
   const modal = document.getElementById('foodModal');
   const modalFoodName = document.getElementById('modalFoodName');
   const modalFoodPrice = document.getElementById('modalFoodPrice');
@@ -378,25 +416,55 @@
   const closeThankyouBtn = document.getElementById('closeThankyou');
   const choiceModal = document.getElementById('choiceModal');
   const customerChoiceDisplay = document.getElementById('customerChoice');
-  
-  // NEW ELEMENTS
   const nameModal = document.getElementById('nameModal');
   const nameInput = document.getElementById('nameInput');
-  const phoneInput = document.getElementById('phoneInput'); // <-- NEW PHONE INPUT
   const confirmNameBtn = document.getElementById('confirmNameBtn');
   const closeNameModal = document.getElementById('closeNameModal');
 
-
+  // --- NEW MENU ADMIN ELEMENTS ---
+  const addItemBtn = document.getElementById('addItemBtn');
+  const addMenuModal = document.getElementById('addMenuModal');
+  const menuNameInput = document.getElementById('menuNameInput');
+  const menuPriceInput = document.getElementById('menuPriceInput');
+  const menuImageInput = document.getElementById('menuImageInput');
+  const saveMenuBtn = document.getElementById('saveMenuBtn');
+  const closeMenuModalBtn = document.getElementById('closeMenuModal');
+  
   let currentFood = null;
   let orders = [];
   let customerChoice = null;
   let editingIndex = null;
+  // NEW: Global variable to track the menu item being edited
+  let editingId = null; 
+  
+  // ==========================================================
+  // 1. DYNAMIC MENU LOADING & RENDERING
+  // ==========================================================
+  
+  // Creates a single food card element (UPDATED)
+  function renderFoodCard(item) {
+    const foodDiv = document.createElement('div');
+    foodDiv.className = 'food';
+    foodDiv.dataset.name = item.name;
+    foodDiv.dataset.price = item.price;
+    foodDiv.dataset.id = item.id; // Store ID for management
 
-  foods.forEach(food => {
-    food.addEventListener('click', () => {
+    foodDiv.innerHTML = `
+        <img src="${item.image_url || 'https://via.placeholder.com/160'}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/160';">
+        <h3>${item.name}</h3>
+        <p>RM${Number(item.price).toFixed(2)}</p>
+        
+        <div class="admin-controls">
+            <button class="edit-btn">✏️ Edit</button>
+            <button class="remove-btn-menu">🗑️ Remove</button>
+        </div>
+    `;
+    
+    // Add click listener to open the quantity modal (main card area)
+    foodDiv.addEventListener('click', () => {
       currentFood = {
-        name: food.dataset.name,
-        price: parseFloat(food.dataset.price)
+        name: item.name,
+        price: parseFloat(item.price)
       };
       if (!customerChoice) {
         choiceModal.style.display = 'flex';
@@ -404,8 +472,149 @@
         openFoodModal();
       }
     });
+
+    // Add click listeners for the new admin buttons (UPDATED)
+    foodDiv.querySelector('.edit-btn').addEventListener('click', (e) => {
+        e.stopPropagation(); // Stop the event from opening the order modal
+        editMenuItem(item);
+    });
+
+    foodDiv.querySelector('.remove-btn-menu').addEventListener('click', (e) => {
+        e.stopPropagation(); // Stop the event from opening the order modal
+        removeMenuItem(item.id, item.name);
+    });
+
+
+    return foodDiv;
+  }
+
+  // Fetches menu items from Supabase and renders them (UNCHANGED)
+  async function loadMenu() {
+      const { data, error } = await supabaseClient
+          .from('menu_items')
+          .select('*')
+          .order('name', { ascending: true }); // Order alphabetically
+
+      if (error) {
+          console.error("Error loading menu:", error);
+          menuContainer.innerHTML = '<p style="color: red;">Error loading menu.</p>';
+          return;
+      }
+
+      menuContainer.innerHTML = ''; // Clear existing menu
+      if (data.length === 0) {
+          menuContainer.innerHTML = '<p>No menu items available. Click + to add one.</p>';
+      } else {
+          data.forEach(item => {
+              menuContainer.appendChild(renderFoodCard(item));
+          });
+      }
+  }
+
+  // ==========================================================
+  // 2. MENU ADMINISTRATION LOGIC (UPDATED)
+  // ==========================================================
+  
+  // Open modal for adding item (UPDATED to reset state)
+  addItemBtn.addEventListener('click', () => {
+      editingId = null; // Reset editing state
+      document.querySelector('#addMenuModal h3').textContent = 'Tambah Menu Baru'; // Reset modal title
+      // Clear inputs and open modal
+      menuNameInput.value = '';
+      menuPriceInput.value = '';
+      menuImageInput.value = 'https://via.placeholder.com/160';
+      addMenuModal.style.display = 'flex';
   });
 
+  // Function to prepare the modal for editing an existing item (NEW)
+  function editMenuItem(item) {
+      editingId = item.id;
+      menuNameInput.value = item.name;
+      menuPriceInput.value = item.price;
+      menuImageInput.value = item.image_url || 'https://via.placeholder.com/160';
+      document.querySelector('#addMenuModal h3').textContent = `Edit Menu: ${item.name}`;
+      addMenuModal.style.display = 'flex';
+  }
+
+  // Function to delete an item from Supabase (NEW)
+  async function removeMenuItem(itemId, itemName) {
+      if (!confirm(`Anda pasti mahu memadam "${itemName}" dari menu? Tindakan ini tidak boleh diundur.`)) {
+          return;
+      }
+      const { error } = await supabaseClient
+          .from('menu_items')
+          .delete()
+          .eq('id', itemId);
+
+      if (error) {
+          console.error("Error deleting menu item:", error);
+          alert("Gagal memadam menu: " + error.message);
+      } else {
+          loadMenu(); // Refresh menu
+          alert(`"${itemName}" berjaya dipadam.`);
+      }
+  }
+
+  // Close modal (UPDATED to reset state)
+  closeMenuModalBtn.addEventListener('click', () => {
+      addMenuModal.style.display = 'none';
+      editingId = null;
+      document.querySelector('#addMenuModal h3').textContent = 'Tambah Menu Baru';
+  });
+
+  // Save new or existing menu item to Supabase (UPDATED)
+  saveMenuBtn.addEventListener('click', async () => {
+      const name = menuNameInput.value.trim();
+      const price = parseFloat(menuPriceInput.value);
+      const imageUrl = menuImageInput.value.trim() || 'https://via.placeholder.com/160';
+
+      if (!name || isNaN(price) || price <= 0) {
+          alert('Sila masukkan Nama dan Harga yang sah.');
+          return;
+      }
+
+      // Disable button during saving
+      saveMenuBtn.textContent = editingId ? 'Updating...' : 'Saving...';
+      saveMenuBtn.disabled = true;
+
+      let operation;
+      if (editingId) {
+          // **UPDATE** operation for existing item
+          operation = supabaseClient
+              .from('menu_items')
+              .update({ name: name, price: price, image_url: imageUrl })
+              .eq('id', editingId);
+      } else {
+          // **INSERT** operation for new item
+          operation = supabaseClient
+              .from('menu_items')
+              .insert([
+                  { name: name, price: price, image_url: imageUrl }
+              ]);
+      }
+
+      const { error } = await operation;
+
+      if (error) {
+          console.error(`Error ${editingId ? 'updating' : 'saving'} menu item:`, error);
+          alert(`Gagal ${editingId ? 'mengemas kini' : 'menyimpan'} menu: ` + error.message);
+      } else {
+          alert(editingId ? 'Menu item berjaya dikemas kini!' : 'Menu baru berjaya disimpan!');
+          addMenuModal.style.display = 'none';
+          editingId = null; // Reset editing state
+          document.querySelector('#addMenuModal h3').textContent = 'Tambah Menu Baru'; // Reset modal title
+          loadMenu(); // Refresh the menu display
+      }
+
+      // Re-enable button
+      saveMenuBtn.textContent = 'Simpan Menu';
+      saveMenuBtn.disabled = false;
+  });
+
+  // ==========================================================
+  // 3. EXISTING ORDERING LOGIC (UNCHANGED)
+  // ==========================================================
+  
   function setChoice(choice) {
     customerChoice = choice;
     customerChoiceDisplay.textContent = `Pilihan: ${choice}`;
@@ -494,58 +703,41 @@
     openFoodModal();
   }
 
-  // --- NEW Checkout Workflow START ---
-
+  // Checkout workflow (UNCHANGED)
   checkoutBtn.addEventListener('click', () => {
-    // Check if an order exists
     if (orders.length === 0) {
         alert("Sila tambah item ke pesanan anda dahulu.");
         return;
     }
-    // Open the Name/Phone Modal
     nameModal.style.display = 'flex';
-    nameInput.value = ''; // Clear previous name
-    phoneInput.value = ''; // Clear previous phone
+    nameInput.value = '';
   });
 
   closeNameModal.addEventListener('click', () => {
     nameModal.style.display = 'none';
   });
 
-  // Supabase initialization (unchanged)
-  const supabaseClient = supabase.createClient(
-    'https://sdzwrpqyhxsljtnndwwz.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkendycHF5aHhzbGp0bm5kd3d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1NzUzNDksImV4cCI6MjA3NTE1MTM0OX0.KwW62zUh_bfaBGO0q5-usyMtYsBrfDUbdj30zxx4Dfk'
-  );
-
   confirmNameBtn.addEventListener('click', async () => {
     const customerName = nameInput.value.trim();
-    const customerPhone = phoneInput.value.trim(); // <-- NEW
 
     if (!customerName) {
         alert("Sila masukkan nama anda untuk pesanan ini.");
         return;
     }
-    
-    if (!customerPhone) { // <-- NEW
-        alert("Sila masukkan nombor telefon anda untuk pesanan ini.");
-        return;
-    }
 
-    nameModal.style.display = 'none'; // Hide name modal
+    nameModal.style.display = 'none';
 
     let total = orders.reduce((sum, order) => sum + order.price * order.qty, 0);
     finalTotal.textContent = `Jumlah Akhir: RM${total.toFixed(2)}`;
     
-    // Send order to supabase
+    // send order to supabase
     const { data, error } = await supabaseClient
       .from('orders')
       .insert([
         {
           choice: customerChoice,
           customer_name: customerName,
-          customer_phone: customerPhone, // <-- NEW DATA FIELD
-          items: orders, // stored as JSON
+          items: orders,
           total: total,
           created_at: new Date().toISOString()
         }
@@ -556,12 +748,9 @@
       alert("Gagal menyimpan pesanan. Sila cuba lagi.");
     } else {
       console.log("Order saved:", data);
-      // Show Thank You Modal only upon successful insertion
       thankyouModal.style.display = 'flex';
     }
   });
-
-  // --- NEW Checkout Workflow END ---
 
   closeThankyouBtn.addEventListener('click', () => {
     thankyouModal.style.display = 'none';
@@ -569,13 +758,16 @@
     customerChoice = null;
     editingIndex = null;
     customerChoiceDisplay.textContent = '';
-    
     nameInput.value = ''; 
-    phoneInput.value = ''; // <-- NEW: Clear phone input
-    
     renderOrders();
   });
   
+  // ==========================================================
+  // 4. INITIALIZATION
+  // ==========================================================
+  // Load the menu when the page loads
+  loadMenu();
+
 </script>
 
 </body>

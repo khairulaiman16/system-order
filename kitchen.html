@@ -190,6 +190,8 @@
 
     div.innerHTML = `
       <h3>Order #${order.daily_number || order.id}</h3>
+      <p><strong>Customer:</strong> ${order.customer_name ?? "N/A"}</p>
+      <p><strong>Phone:</strong> ${order.customer_phone ?? "N/A"}</p>
       <p><strong>Choice:</strong> ${order.choice ?? "-"}</p>
       <ul class="items">${itemsList}</ul>
       <div class="total">Total: RM${Number(order.total || 0).toFixed(2)}</div>

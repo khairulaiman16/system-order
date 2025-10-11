@@ -12,65 +12,38 @@
       margin: 0;
       font-family: Arial, sans-serif;
       display: flex;
-      /* Removed height: 100vh to allow the body to manage scrolling */
+      height: 100vh;
       background: #f4f4f4;
     }
 
     /* Layout */
-    .menu-wrapper {
-        width: 70%;
-        padding: 0 20px 20px 20px;
-        box-sizing: border-box;
-    }
-    
-    .menu-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        
-        /* STICKY HEADER for MENU */
-        position: sticky; 
-        top: 0; 
-        background: #f4f4f4; 
-        z-index: 10;
-        padding-top: 20px; 
-        padding-bottom: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-    .menu-header h2 {
-        margin: 0;
-    }
-
     .menu {
-      background: #f4f4f4;
+      width: 70%;
+      background: #fff;
+      padding: 20px;
+      box-sizing: border-box;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       justify-content: center;
+      align-items: center;
       gap: 20px;
-      padding-top: 10px;
     }
 
     .order {
       width: 30%;
       background: #fafafa;
       border-left: 2px solid #eee;
-      padding: 0 20px 20px 20px;
+      padding: 20px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      
-      /* Make order panel FIXED and full height to stick to the right side */
-      height: 100vh; 
-      position: fixed; 
-      top: 0;
-      right: 0;
     }
 
     /* Food Cards */
     .food {
-      height: 280px; /* Adjusted height for basic layout */
+      flex: 0 0 220px;
+      height: 280px;
       background: white;
       border-radius: 15px;
       padding: 10px;
@@ -78,13 +51,9 @@
       text-align: center;
       cursor: pointer;
       transition: transform 0.2s;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
     }
     .food:hover {
-      transform: scale(1.03);
+      transform: scale(1.05);
     }
     .food img {
       width: 100%;
@@ -95,25 +64,16 @@
     .food h3 {
       margin: 10px 0 5px;
       font-size: 18px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
     .food p {
       margin: 5px 0;
       font-size: 14px;
       color: #555;
     }
-    
+
     /* Orders */
     .order h2 {
-      /* STICKY HEADER INSIDE the FIXED ORDER panel */
-      position: sticky; 
-      top: 0; 
-      background: #fafafa;
-      z-index: 10;
-      padding-top: 20px;
-      margin-top: 0; 
+      margin-top: 0;
       font-size: 20px;
       border-bottom: 2px solid #eee;
       padding-bottom: 10px;
@@ -125,9 +85,8 @@
     }
     .order-list {
       flex-grow: 1;
-      overflow-y: auto; /* Order list scrolls internally */
+      overflow-y: auto;
       margin-bottom: 20px;
-      padding-right: 5px;
     }
     .order-item {
       display: flex;
@@ -189,19 +148,6 @@
       from { transform: scale(0.7); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-    
-    /* Style for Customer Details Inputs (Name and Phone) */
-    #nameInput,
-    #phoneInput {
-        padding: 10px; 
-        margin: 8px 0; 
-        width: 80%; 
-        border: 2px solid #ddd;
-        border-radius: 8px; 
-        font-size: 16px;
-        text-align: center;
-        box-sizing: border-box;
-    }
 
     .qty-control {
       display: flex;
@@ -211,103 +157,134 @@
       gap: 10px;
     }
     .qty-control button {
-      width: 40px; height: 40px; font-size: 20px; border: none;
-      background: #007bff; color: white; border-radius: 50%; cursor: pointer;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
     }
     .qty-control input {
-      width: 60px; text-align: center; font-size: 18px; padding: 5px;
-      border: 2px solid #ddd; border-radius: 8px;
+      width: 60px;
+      text-align: center;
+      font-size: 18px;
+      padding: 5px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
     }
     .add-btn {
-      background: #28a745; color: white; padding: 10px 20px; border: none;
-      border-radius: 8px; cursor: pointer; margin-top: 10px;
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
     }
     .close-btn {
-      margin-top: 10px; background: #dc3545; color: white; padding: 10px 20px;
-      border: none; border-radius: 8px; cursor: pointer;
+      margin-top: 10px;
+      background: #dc3545;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
 
     /* Thank You Popup */
     .thankyou {
-      display: none; position: fixed; z-index: 2000; top: 0; left: 0;
-      width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-      justify-content: center; align-items: center;
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
     }
     .thankyou-content {
-      background: white; padding: 20px; border-radius: 15px; text-align: center;
-      width: 300px; animation: popIn 0.3s ease;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      width: 300px;
+      animation: popIn 0.3s ease;
     }
-    .thankyou-content img { max-width: 200px; margin: 15px auto; display: block; }
+    .thankyou-content img {
+      max-width: 200px;
+      margin: 15px auto;
+      display: block;
+    }
 
     /* Choice Modal Buttons */
     .choice-btn {
-      padding: 10px 20px; margin: 10px; border: none; border-radius: 8px;
-      cursor: pointer; font-size: 16px; color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      color: white;
     }
-    .choice-makan { background: #007bff; }
-    .choice-bungkus { background: #28a745; }
+    .choice-makan {
+      background: #007bff;
+    }
+    .choice-bungkus {
+      background: #28a745;
+    }
 
-    /* Responsive adjustments */
+    /* NEW Style for Name Input */
+    #nameInput {
+        padding: 10px; 
+        margin: 15px 0; 
+        width: 80%; 
+        border: 2px solid #ddd;
+        border-radius: 8px; 
+        font-size: 16px;
+        text-align: center;
+    }
+
     @media (max-width: 900px) {
       body { flex-direction: column; }
-      .menu-wrapper {
+      .menu, .order {
         width: 100%;
-        padding: 20px;
+        height: auto;
       }
-      .order {
-        width: 100%;
-        height: auto; 
-        position: static; 
-        margin-top: 20px; 
-        border-left: none;
-        padding: 20px;
+      .menu {
+        grid-template-columns: repeat(2, 1fr);
       }
-      .menu-header, .order h2 {
-        position: sticky; 
-        top: 0;
-        z-index: 10;
-        padding: 20px;
-        margin: -20px -20px 20px -20px; 
-        width: auto;
-      }
-      .menu-header {
-        background: #f4f4f4;
-      }
-      .order h2 {
-        background: #fafafa;
+    }
+    @media (max-width: 600px) {
+      .menu {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="menu-wrapper">
-    <div class="menu-header">
-        <h2>Menu</h2>
-        </div>
-    <div class="menu" id="menuContainer">
-      
-      <div class="food" data-name="Roti Canai" data-price="1.50">
-        <img src="Assets/roti-canai.jpg" alt="Roti Canai">
-        <h3>Roti Canai</h3>
-        <p>RM1.50 / pc</p>
-      </div>
-      <div class="food" data-name="Satay Ayam" data-price="1.40">
-        <img src="Assets/satay-ayam.png" alt="Satay Ayam">
-        <h3>Satay Ayam</h3>
-        <p>RM1.40 / pc</p>
-      </div>
-      <div class="food" data-name="Satay Daging" data-price="1.40">
-        <img src="Assets/satay-daging.png" alt="Satay Daging">
-        <h3>Satay Daging</h3>
-        <p>RM1.40 / pc</p>
-      </div>
-      <div class="food" data-name="Nasi Impit" data-price="1.00">
-        <img src="Assets/nasi-impit.png" alt="Nasi Impit">
-        <h3>Nasi Impit</h3>
-        <p>RM1.00 / pc</p>
-      </div>
-
+  <div class="menu">
+    <div class="food" data-name="Roti Canai" data-price="1.50">
+      <img src="Assets/roti-canai.jpg" alt="Roti Canai">
+      <h3>Roti Canai</h3>
+      <p>RM1.50 / pc</p>
+    </div>
+    <div class="food" data-name="Satay Ayam" data-price="1.40">
+      <img src="Assets/satay-ayam.png" alt="Satay Ayam">
+      <h3>Satay Ayam</h3>
+      <p>RM1.40 / pc</p>
+    </div>
+    <div class="food" data-name="Satay Daging" data-price="1.40">
+      <img src="Assets/satay-daging.png" alt="Satay Daging">
+      <h3>Satay Daging</h3>
+      <p>RM1.40 / pc</p>
+    </div>
+    <div class="food" data-name="Nasi Impit" data-price="1.00">
+      <img src="Assets/nasi-impit.png" alt="Nasi Impit">
+      <h3>Nasi Impit</h3>
+      <p>RM1.00 / pc</p>
     </div>
   </div>
 
@@ -343,9 +320,8 @@
 
   <div id="nameModal" class="modal">
     <div class="modal-content">
-      <h3>Sila masukkan butiran anda</h3>
-      <input type="text" id="nameInput" placeholder="Nama Anda (e.g., Meor Azlan)">
-      <input type="tel" id="phoneInput" placeholder="No. Telefon (e.g., 0123456789)">
+      <h3>Sila masukkan nama anda</h3>
+      <input type="text" id="nameInput" placeholder="Contoh: Meor Azlan">
       <button class="add-btn" id="confirmNameBtn">Sahkan Pesanan</button>
       <button class="close-btn" id="closeNameModal">Batal</button>
     </div>
@@ -378,11 +354,10 @@
   const closeThankyouBtn = document.getElementById('closeThankyou');
   const choiceModal = document.getElementById('choiceModal');
   const customerChoiceDisplay = document.getElementById('customerChoice');
-  
+
   // NEW ELEMENTS
   const nameModal = document.getElementById('nameModal');
   const nameInput = document.getElementById('nameInput');
-  const phoneInput = document.getElementById('phoneInput'); // <-- NEW PHONE INPUT
   const confirmNameBtn = document.getElementById('confirmNameBtn');
   const closeNameModal = document.getElementById('closeNameModal');
 
@@ -502,10 +477,9 @@
         alert("Sila tambah item ke pesanan anda dahulu.");
         return;
     }
-    // Open the Name/Phone Modal
+    // Open the Name Modal
     nameModal.style.display = 'flex';
     nameInput.value = ''; // Clear previous name
-    phoneInput.value = ''; // Clear previous phone
   });
 
   closeNameModal.addEventListener('click', () => {
@@ -520,15 +494,9 @@
 
   confirmNameBtn.addEventListener('click', async () => {
     const customerName = nameInput.value.trim();
-    const customerPhone = phoneInput.value.trim(); // <-- NEW
 
     if (!customerName) {
         alert("Sila masukkan nama anda untuk pesanan ini.");
-        return;
-    }
-    
-    if (!customerPhone) { // <-- NEW
-        alert("Sila masukkan nombor telefon anda untuk pesanan ini.");
         return;
     }
 
@@ -543,8 +511,7 @@
       .insert([
         {
           choice: customerChoice,
-          customer_name: customerName,
-          customer_phone: customerPhone, // <-- NEW DATA FIELD
+          customer_name: customerName, // <--- NEW DATA FIELD ADDED
           items: orders, // stored as JSON
           total: total,
           created_at: new Date().toISOString()
@@ -570,8 +537,8 @@
     editingIndex = null;
     customerChoiceDisplay.textContent = '';
     
+    // Clear the name input as well
     nameInput.value = ''; 
-    phoneInput.value = ''; // <-- NEW: Clear phone input
     
     renderOrders();
   });
